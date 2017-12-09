@@ -6,4 +6,17 @@
     android:layout_height="match_parent"
     tools:context="com.example.suwitsaengkaew.soponline.DocumentListActivity">
 
+    <RelativeLayout
+        android:layout_width="584dp"
+        android:layout_height="807dp"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp"
+        tools:ignore="MissingConstraints">
+
+        <ListView
+            android:id="@+id/documentListlistview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"/>
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

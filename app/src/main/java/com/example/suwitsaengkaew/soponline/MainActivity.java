@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 //            System.setProperty("http.keepAlive", "false");
 //        }
 
-        SyncDatabase();
+        // SyncDatabase();
         bindWidget();
 //        pdfView = (PDFView) findViewById(R.id.pdfView);
 //        pdfView.fromAsset("demo.pdf").load();
