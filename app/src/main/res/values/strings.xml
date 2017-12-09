@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SOPOnline</string>
+    <string name="welcom">Welcome to YTMT SOP Online</string>
+    <string name="btnStart">Start</string>
+    <string name="departmentList">Section List</string>
+    <string name="documentList">Document List</string>
+    <string name="documentFile">Document File</string>
 </resources>
