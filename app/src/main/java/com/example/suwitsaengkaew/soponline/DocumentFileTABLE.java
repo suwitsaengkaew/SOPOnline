@@ -2,7 +2,9 @@ package com.example.suwitsaengkaew.soponline;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 /**
  * Created by suwitsaengkaew on 7/12/2017 AD.
@@ -36,5 +38,34 @@ public class DocumentFileTABLE {
         ObjContentValues.put(COLUMN_FILEURL, file_url);
 
         return writeSQL.insert(DOCUMENTFILETABLE, null,ObjContentValues);
+    }
+
+    public String[] searchDocumentFile (String doc_id) {
+
+        String fileName[] = null;
+
+        try {
+
+            Cursor ObjCursor = readSQL.rawQuery("SELECT file_url FROM documentfileTABLE WHERE doc_id = '" +
+                    doc_id.toString().trim() + "'", null);
+            ObjCursor.moveToFirst();
+
+            fileName = new String[ObjCursor.getCount()];
+
+            for (int i = 0; i < ObjCursor.getCount(); i++) {
+                fileName[i] = ObjCursor.getString(ObjCursor.getColumnIndex("file_url"));
+                ObjCursor.moveToNext();
+                // Log.d("SOPOnline", "File name ==> " + fileName[i]);
+            }
+
+            ObjCursor.close();
+
+
+        } catch (Exception e) {
+            Log.d("SOPOnline", "File name get error " + e.toString());
+        }
+
+        return fileName;
+
     }
 }

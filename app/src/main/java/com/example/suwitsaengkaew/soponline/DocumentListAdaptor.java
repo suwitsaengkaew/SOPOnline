@@ -14,20 +14,22 @@ import android.widget.TextView;
 public class DocumentListAdaptor  extends BaseAdapter {
 
     private Context Objcontext;
+    private String[] strDocId;
     private String[] strNumber;
     private String[] strSubject;
 
     public DocumentListAdaptor(Context context, String[][] strOrgCode) {
 
         this.Objcontext = context;
+        this.strDocId = new String[strOrgCode.length];
         this.strNumber = new String[strOrgCode.length];
         this.strSubject = new String[strOrgCode.length];
 
         Log.d("SOPOnline", "Array length ==> " + strOrgCode.length);
         for (int i = 0; i < strOrgCode.length; i++) {
-
-            this.strNumber[i] = strOrgCode[i][0];
-            this.strSubject[i] = strOrgCode[i][1];
+            this.strDocId[i] = strOrgCode[i][0];
+            this.strNumber[i] = strOrgCode[i][1];
+            this.strSubject[i] = strOrgCode[i][2];
 
             Log.d("SOPOnline", "Array Length 2 ==> " + strOrgCode[i].length);
         }

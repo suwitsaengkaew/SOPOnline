@@ -53,17 +53,18 @@ public class DocumentListTABLE {
             String strDocumentList[][] = null;
             int cPos;
             Cursor ObjCursor = readSQL.query(DOCUMENTLISTTABLE,
-                    new String[] { COLUMN_NUMBER, COLUMN_SUBJECT }, COLUMN_CODE + "=?",
+                    new String[] { COLUMN_ID, COLUMN_NUMBER, COLUMN_SUBJECT }, COLUMN_CODE + "=?",
                     new String[] {String.valueOf(orgCode)}, null, null, null, null);
 
             if (ObjCursor.getCount() > 0) {
 
-                strDocumentList = new String[ObjCursor.getCount()][2];
+                strDocumentList = new String[ObjCursor.getCount()][3];
                 ObjCursor.moveToFirst();
                 do {
                     cPos = ObjCursor.getPosition();
-                    strDocumentList[cPos][0] = ObjCursor.getString(ObjCursor.getColumnIndex(COLUMN_NUMBER));
-                    strDocumentList[cPos][1] = ObjCursor.getString(ObjCursor.getColumnIndex(COLUMN_SUBJECT));
+                    strDocumentList[cPos][0] = ObjCursor.getString(ObjCursor.getColumnIndex(COLUMN_ID));
+                    strDocumentList[cPos][1] = ObjCursor.getString(ObjCursor.getColumnIndex(COLUMN_NUMBER));
+                    strDocumentList[cPos][2] = ObjCursor.getString(ObjCursor.getColumnIndex(COLUMN_SUBJECT));
 
                 } while (!ObjCursor.isAfterLast());
 
@@ -84,21 +85,23 @@ public class DocumentListTABLE {
         try {
             String[][] strDocumentList = null;
             int cPos;
-            Cursor ObjCursor = readSQL.rawQuery("SELECT doc_number, doc_subject FROM documentlistTABLE WHERE org_code = '"
+            Cursor ObjCursor = readSQL.rawQuery("SELECT doc_id, doc_number, doc_subject FROM documentlistTABLE WHERE org_code = '"
                     + orgCode.toString().trim() + "' ORDER BY doc_number", null);
 
             if (ObjCursor.getCount() > 0) {
 
                 Log.d("SOPOnline", "Get Count ==> " + ObjCursor.getCount());
 
-                strDocumentList = new String[ObjCursor.getCount()][2];
+                strDocumentList = new String[ObjCursor.getCount()][3];
                 ObjCursor.moveToFirst();
                 do {
                     cPos = ObjCursor.getPosition();
-                    strDocumentList[cPos][0] = ObjCursor.getString(ObjCursor.getColumnIndex("doc_number"));
-                    Log.d("SOPOnline", "doc_number ==> " + cPos + "-" + strDocumentList[cPos][0]);
-                    strDocumentList[cPos][1] = ObjCursor.getString(ObjCursor.getColumnIndex("doc_subject"));
-                    Log.d("SOPOnline", "doc_subject ==> " + strDocumentList[cPos][1]);
+                    strDocumentList[cPos][0] = ObjCursor.getString(ObjCursor.getColumnIndex("doc_id"));
+                    Log.d("SOPOnline", "doc_id ==> " + cPos + "-" + strDocumentList[cPos][0]);
+                    strDocumentList[cPos][1] = ObjCursor.getString(ObjCursor.getColumnIndex("doc_number"));
+                    Log.d("SOPOnline", "doc_number ==> " + cPos + "-" + strDocumentList[cPos][1]);
+                    strDocumentList[cPos][2] = ObjCursor.getString(ObjCursor.getColumnIndex("doc_subject"));
+                    Log.d("SOPOnline", "doc_subject ==> " + strDocumentList[cPos][2]);
                     ObjCursor.moveToNext();
                 } while (!ObjCursor.isAfterLast());
 
