@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
+import android.widget.TextView;
 
 import com.github.barteksc.pdfviewer.PDFView;
 
@@ -25,7 +26,6 @@ import java.io.File;
 public class DocumentFileActivity extends AppCompatActivity {
 
     private PDFView pdfView;
-    //private PermissionCheck permissionCheck;
     private Context context;
 
     @Override
@@ -42,43 +42,44 @@ public class DocumentFileActivity extends AppCompatActivity {
 
         clearESmartFile();
         // Log.d("SOPOnline", "Get Intent ==> " + getIntent().getExtras().getString("url") );
-        String Url = getIntent().getExtras().getString("url");
+        String[] _getintentArray = getIntent().getStringArrayExtra("url");
+        //String Url = getIntent().getExtras().getString("url");
 
-
-
-        //Uri uri = Uri.parse(Url);
-        //Log.d("SOPOnline", "Uri ==> " + uri.toString());
-        //pdfView = (PDFView) findViewById(R.id.pdfWebView);
-        //pdfView.fromUri(uri).load();
-        //pdfView.fromAsset("demo.pdf").load();
         if  (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, PackageManager.PERMISSION_GRANTED);
         }
         else {
-            if (doInBackground(Url) == true) {
+            final String filename = _getintentArray[0].toString();
+            String url = _getintentArray[1].toString();
+
+            if (doInBackground(url) == true) {
 
                 Log.d("SOPOnline", "Check file");
 
 
                 new android.os.Handler().postDelayed(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                File downloadDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
-                                File listAllFiles[] = downloadDir.listFiles();
-                                if (listAllFiles != null && listAllFiles.length > 0) {
-                                    for (File currentFile : listAllFiles) {
-                                        if (currentFile.getName().endsWith("")) {
-                                            Log.d("SOPOnline", "File name ==> " + currentFile.toString());
-                                            if (currentFile.getName().substring(0,6).toString().equals("esmart")) {
-                                                pdfView = (PDFView) findViewById(R.id.pdfWebView);
-                                                pdfView.fromFile(currentFile).load();
-                                            }
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            File downloadDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
+                            File listAllFiles[] = downloadDir.listFiles();
+                            if (listAllFiles != null && listAllFiles.length > 0) {
+                                for (File currentFile : listAllFiles) {
+                                    if (currentFile.getName().endsWith("")) {
+                                        Log.d("SOPOnline", "File name ==> " + currentFile.toString());
+                                        if (currentFile.getName().substring(0,6).toString().equals("esmart")) {
+
+                                            TextView _textView = (TextView) findViewById(R.id.documentFileText);
+                                            _textView.setText(filename);
+
+                                            pdfView = (PDFView) findViewById(R.id.pdfWebView);
+                                            pdfView.fromFile(currentFile).load();
                                         }
                                     }
                                 }
                             }
-                        },5000
+                        }
+                    },5000
                 );
             }
         }
@@ -90,7 +91,7 @@ public class DocumentFileActivity extends AppCompatActivity {
         boolean flag = true;
         boolean downloading = true;
 
-        try{
+        try {
 
             DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
@@ -105,30 +106,28 @@ public class DocumentFileActivity extends AppCompatActivity {
             query = new DownloadManager.Query();
             Cursor c = null;
 
-            if(query!=null) {
-                query.setFilterByStatus(DownloadManager.STATUS_FAILED|DownloadManager.STATUS_PAUSED|DownloadManager.STATUS_SUCCESSFUL|
-                        DownloadManager.STATUS_RUNNING|DownloadManager.STATUS_PENDING);
+            if (query != null) {
+                query.setFilterByStatus(DownloadManager.STATUS_FAILED | DownloadManager.STATUS_PAUSED | DownloadManager.STATUS_SUCCESSFUL |
+                        DownloadManager.STATUS_RUNNING | DownloadManager.STATUS_PENDING);
             } else {
                 return flag;
             }
             c = manager.query(query);
-            if( c.moveToFirst() ) {
+            if (c.moveToFirst()) {
 
 
-
-                while (downloading)
-                {
+                while (downloading) {
                     int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
-                    Log.i ("SOPOnline","Downloading" + status);
-                    Log.i ("SOPOnline","Downloading DownloadManager.STATUS_SUCCESSFUL" + DownloadManager.STATUS_SUCCESSFUL);
-                    if (status == DownloadManager.STATUS_SUCCESSFUL)
-                    {    Log.i ("SOPOnline","done");
+                    Log.i("SOPOnline", "Downloading" + status);
+                    Log.i("SOPOnline", "Downloading DownloadManager.STATUS_SUCCESSFUL" + DownloadManager.STATUS_SUCCESSFUL);
+                    if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                        Log.i("SOPOnline", "done");
                         downloading = false;
                         flag = true;
                         break;
                     }
-                    if (status == DownloadManager.STATUS_FAILED)
-                    {Log.i ("SOPOnline","Fail");
+                    if (status == DownloadManager.STATUS_FAILED) {
+                        Log.i("SOPOnline", "Fail");
                         downloading = false;
                         flag = false;
                         break;
@@ -137,40 +136,11 @@ public class DocumentFileActivity extends AppCompatActivity {
                 }
             }
             return flag;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             flag = false;
             return flag;
         }
-
-//        try {
-//            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-//                request.setTitle("Vertretungsplan");
-//                request.setDescription("wird heruntergeladen");
-//            request.allowScanningByMediaScanner();
-//            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-//            String filename = URLUtil.guessFileName(url, null, MimeTypeMap.getFileExtensionFromUrl(url));
-//            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-//            DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-//            long idDownload = manager.enqueue(request);
-//
-//            DownloadManager.Query query = null;
-//            query = new DownloadManager.Query();
-//
-//            Cursor cursor = null;
-//            if ( q)
-//
-//                Log.d("SOPOnline", "filename ==> " + filename.toString());
-//
-//
-//        } catch (Exception e) {
-//            Log.d("SOPOnline", "Download Manager ==> " + e.toString());
-//        }
-//
-//        return false;
     }
-
 
     private void clearESmartFile() {
 

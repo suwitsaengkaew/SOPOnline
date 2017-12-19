@@ -6,8 +6,21 @@
     android:layout_height="match_parent"
     tools:context="com.example.suwitsaengkaew.soponline.DocumentFileActivity">
 
+    <TextView
+        android:id="@+id/documentFileText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fontFamily="monospace"
+        android:textColor="@android:color/secondary_text_dark_nodisable"
+        android:textStyle="bold"
+        android:textSize="24dp"
+        android:paddingTop="10dp"
+        android:paddingLeft="20dp"/>
+
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/pdfWebView"
+        android:paddingTop="10dp"
+        android:layout_below="@+id/documentFileText"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

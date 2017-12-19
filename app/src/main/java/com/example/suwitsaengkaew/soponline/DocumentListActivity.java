@@ -1,5 +1,6 @@
 package com.example.suwitsaengkaew.soponline;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.widget.ListView;
 
 public class DocumentListActivity extends AppCompatActivity {
 
+    private Context context;
     private DocumentListTABLE documentListTab;
     private DocumentFileTABLE documentFileTab;
     private String[] documentFileFileName;
@@ -26,10 +28,7 @@ public class DocumentListActivity extends AppCompatActivity {
         documentFileTab = new DocumentFileTABLE(this);
 
         orgCodeGetIntent = getIntent().getExtras().getString("orgCode");
-        // Log.d("SOPOnline", "Intent Extras ==> " + orgCodeGetIntent);
         strDocumentList2D = documentListTab.searchDocumentList1D(orgCodeGetIntent);
-
-        // Log.d("SOPOnline", "Length of DocumentList ==> " + strDocumentList2D.length);
 
         createDocumentListView();
     }
@@ -64,21 +63,33 @@ public class DocumentListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 String DocId = strDocumentList2D[position][0].toString();
+                String[] _putExtra = new String[2];
+
                 documentFileFileName = documentFileTab.searchDocumentFile(DocId);
 
                 String[] documentFile = new String[documentFileFileName.length];
-                String Url = null;
+
                 for (int i = 0; i < documentFileFileName.length; i++) {
                     documentFile[i] = strFilter(documentFileFileName[i].toString());
                     // Log.d("SOPOnline", "Document i ==> " + documentFile[i].toString());
                 }
 
                 if (documentFile.length == 1) {
-                    Url = documentFile[0].toString();
+
+
+                    _putExtra[0] = strDocumentList2D[position][2].toString();
+                    _putExtra[1] = documentFile[0].toString();
 
                     Intent ObjIntentDocumentFileActivity = new Intent(DocumentListActivity.this, DocumentFileActivity.class);
-                    ObjIntentDocumentFileActivity.putExtra("url", Url);
+                    ObjIntentDocumentFileActivity.putExtra("url", _putExtra);
                     startActivity(ObjIntentDocumentFileActivity);
+                }
+                else {
+
+                    AlertDialog documentListAlert = new AlertDialog();
+                    documentListAlert.errorDialog(DocumentListActivity.this,"Document List Activity", "Not found for PDF file on Server site. \n Please contact Administrator\n Document Length " + documentFile.length +
+                            "\n Document ID " + DocId);
+
                 }
 
 
